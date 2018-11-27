@@ -26,7 +26,7 @@ class cv_starterConan(ConanFile):
         "shared": "False",
         "opencv:shared": "False",
         "opencv:contrib": "True",
-        "opencv:gtk": None
+        "opencv:gtk": 3
     }
     requires = ("docopt/0.6.2@conan/stable", "opencv/4.0.0@conan/stable")
     generators = "cmake"
@@ -52,6 +52,15 @@ class cv_starterConan(ConanFile):
     def imports(self):
         self.copy("*", dst="include", src="include")
         self.copy("*", dst="bin", src="lib")
+
+    def system_requirements(self):
+        pack_list = None
+        if os_info.linux_distro == "ubuntu":
+            pack_list = ["qtbase5-dev"]
+        if pack_list:
+            for p in pack_list:
+                installer = SystemPackageTool()
+                installer.install(p)
 
     def deploy(self):
         self.copy("*", src="bin", dst=conan_bin_dir)
